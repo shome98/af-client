@@ -15,7 +15,7 @@ const ToggleThemeButton = () => {
     return (
         <Button
             type="button"
-            variant="outline"
+            className="bg-transparent text-foreground hover:bg-muted/30 hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50"
             size="icon"
             onClick={toggleTheme}
             aria-label="Toggle color theme"
