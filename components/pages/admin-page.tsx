@@ -212,7 +212,7 @@ export function AdminPage() {
               <p className="text-sm text-muted-foreground">No activity found for this user.</p>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[640px] text-left text-sm">
+                <table className="w-full min-w-160 text-left text-sm">
                   <thead>
                     <tr className="border-b border-border text-xs uppercase tracking-[0.18em] text-muted-foreground">
                       <th className="pb-3 pr-4">Date</th>
