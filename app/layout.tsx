@@ -1,41 +1,32 @@
-import type {Metadata} from "next";
-import {Montserrat} from "next/font/google";
-import "./globals.css";
-import React from "react";
-import {cn} from "@/lib/utils";
-import NavBar from "@/components/Navbar";
+import type { Metadata } from "next"
+import React from "react"
 
-const montserrat = Montserrat({subsets: ['latin'], variable: '--font-sans'});
-const themeScript = `(() => {
-  const storageKey = 'af-theme';
-  const storedTheme = window.localStorage.getItem(storageKey);
-  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  const theme = storedTheme === 'light' || storedTheme === 'dark' ? storedTheme : systemTheme;
-  document.documentElement.classList.toggle('dark', theme === 'dark');
-  document.documentElement.style.colorScheme = theme;
-})();`;
+import NavBar from "@/components/Navbar"
+import Providers from "@/components/providers"
+
+import "./globals.css"
 
 export const metadata: Metadata = {
-    title: "Api Hub",
-    description: "get rest apis in minutes!!!😊",
-};
+  title: "Auth Flow",
+  description: "Full auth flow rebuilt with Next.js 16, Shadcn UI, Redux, and Zod.",
+}
 
 export default function RootLayout({
-                                       children,
-                                   }: Readonly<{
-    children: React.ReactNode;
+  children,
+}: Readonly<{
+  children: React.ReactNode
 }>) {
-    return (
-        <html
-            lang="en"
-            suppressHydrationWarning
-            className={cn("h-full", "antialiased", "font-sans", montserrat.variable)}
-        >
-        <body className="min-h-full flex flex-col">
-        <script dangerouslySetInnerHTML={{__html: themeScript}}/>
-        <NavBar/>
-        <main className="flex-1">{children}</main>
-        </body>
-        </html>
-    );
+  return (
+    <html lang="en" suppressHydrationWarning className="h-full font-sans antialiased">
+      <body className="min-h-full bg-background text-foreground">
+        <Providers initialUser={null}>
+          <div className="relative flex min-h-screen flex-col">
+            <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,rgba(32,129,226,0.11),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(245,158,11,0.10),transparent_26%)]" />
+            <NavBar />
+            <main className="flex-1">{children}</main>
+          </div>
+        </Providers>
+      </body>
+    </html>
+  )
 }
