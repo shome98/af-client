@@ -1,65 +1,69 @@
-"use client"
+'use client';
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { toast } from "sonner"
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { toast } from 'sonner';
 
-import ToggleThemeButton from "@/components/ToggleThemeButton"
-import { Button } from "@/components/ui/button"
-import { Spinner } from "@/components/ui/spinner"
-import { logoutUser } from "@/lib/store/auth-store"
-import { useAppDispatch, useAppSelector } from "@/lib/store/hooks"
-import { cn } from "@/lib/utils"
+import ToggleThemeButton from '@/components/ToggleThemeButton';
+import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
+import { logoutUser } from '@/lib/store/auth-store';
+import { useAppDispatch, useAppSelector } from '@/lib/store/hooks';
+import { cn } from '@/lib/utils';
+import Logo from './common/Logo';
 
 const NavBar = () => {
-  const pathname = usePathname()
-  const dispatch = useAppDispatch()
-  const { user, isBootstrapping } = useAppSelector((state) => state.auth)
+  const pathname = usePathname();
+  const dispatch = useAppDispatch();
+  const { user, isBootstrapping } = useAppSelector((state) => state.auth);
 
   const navClass = (href: string) =>
     cn(
-      "text-sm text-muted-foreground transition-colors hover:text-foreground",
-      pathname === href && "font-medium text-foreground"
-    )
+      'text-sm text-muted-foreground transition-colors hover:text-foreground',
+      pathname === href && 'font-medium text-foreground',
+    );
 
   const handleLogout = async () => {
     try {
-      await dispatch(logoutUser()).unwrap()
-      toast.success("Logged out successfully.")
-      window.location.replace("/")
+      await dispatch(logoutUser()).unwrap();
+      toast.success('Logged out successfully.');
+      window.location.replace('/');
     } catch {
-      toast.error("Failed to log out.")
+      toast.error('Failed to log out.');
     }
-  }
+  };
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/80 bg-background/85 backdrop-blur">
       <nav className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-3">
         <div className="flex items-center gap-6">
-          <Link href="/" className="text-sm font-semibold tracking-[0.24em] uppercase text-foreground">
-            Auth Flow
+          <Link
+            href="/"
+            className="text-sm font-semibold tracking-[0.24em] uppercase text-foreground"
+          >
+            <Logo />
           </Link>
           <div className="hidden items-center gap-4 md:flex">
             {user ? (
               <>
-                <Link href="/dashboard" className={navClass("/dashboard")}>
+                <Link href="/dashboard" className={navClass('/dashboard')}>
                   Dashboard
                 </Link>
-                <Link href="/profile" className={navClass("/profile")}>
+                <Link href="/profile" className={navClass('/profile')}>
                   Profile
                 </Link>
-                {user.role === "admin" ? (
-                  <Link href="/admin" className={navClass("/admin")}>
+                {user.role === 'admin' ? (
+                  <Link href="/admin" className={navClass('/admin')}>
                     Admin
                   </Link>
                 ) : null}
               </>
             ) : (
               <>
-                <Link href="/login" className={navClass("/login")}>
+                <Link href="/login" className={navClass('/login')}>
                   Login
                 </Link>
-                <Link href="/register" className={navClass("/register")}>
+                <Link href="/register" className={navClass('/register')}>
                   Register
                 </Link>
               </>
@@ -91,7 +95,7 @@ const NavBar = () => {
         </div>
       </nav>
     </header>
-  )
-}
+  );
+};
 
-export default NavBar
+export default NavBar;
