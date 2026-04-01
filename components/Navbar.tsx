@@ -52,6 +52,9 @@ const NavBar = () => {
                 <Link href="/profile" className={navClass('/profile')}>
                   Profile
                 </Link>
+                <Link href="/create-api" className={navClass('/create-api')}>
+                  Create Api
+                </Link>
                 {user.role === 'admin' ? (
                   <Link href="/admin" className={navClass('/admin')}>
                     Admin
