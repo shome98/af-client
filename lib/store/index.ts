@@ -1,9 +1,10 @@
-"use client"
+'use client';
 
-import { configureStore } from "@reduxjs/toolkit"
+import { configureStore } from '@reduxjs/toolkit';
 
-import { authReducer } from "@/lib/store/auth-store"
-import type { User } from "@/types/auth.types"
+import { authReducer } from '@/lib/store/auth-store';
+import { mongoApiReducer } from '@/lib/store/mongo-store';
+import type { User } from '@/types/auth.types';
 
 export function createAppStore(initialUser: User | null) {
   const preloadedState = {
@@ -20,16 +21,26 @@ export function createAppStore(initialUser: User | null) {
         initialized: false,
       },
     },
-  }
+    mongoApi: {
+      apiSession: null,
+      isCreating: false,
+      isRegeneratingKey: false,
+      createError: null,
+      createValidationErrors: null,
+      regenerateKeyError: null,
+      isHydrated: false,
+    },
+  };
 
   return configureStore({
     reducer: {
       auth: authReducer,
+      mongoApi: mongoApiReducer,
     },
     preloadedState,
-  })
+  });
 }
 
-export type AppStore = ReturnType<typeof createAppStore>
-export type RootState = ReturnType<AppStore["getState"]>
-export type AppDispatch = AppStore["dispatch"]
+export type AppStore = ReturnType<typeof createAppStore>;
+export type RootState = ReturnType<AppStore['getState']>;
+export type AppDispatch = AppStore['dispatch'];
