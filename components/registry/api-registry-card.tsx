@@ -1,0 +1,174 @@
+'use client';
+
+import Link from 'next/link';
+import {
+  RiMoreLine,
+  RiFileCopyLine,
+  RiKey2Line,
+  RiDeleteBinLine,
+  RiEditLine,
+} from '@remixicon/react';
+
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { ApiStatusBadge } from './api-status-badge';
+import type { ApiRegistryItem } from '@/types/registry.types';
+
+interface ApiRegistryCardProps {
+  api: ApiRegistryItem;
+  onRegenerateKey: (id: string) => void;
+  onSoftDelete: (id: string) => void;
+  onCopyApiId: (apiId: string) => void;
+}
+
+// Helper to get expiration info - computed during render with server time reference
+function getExpirationInfo(expirationTime: string) {
+  // Use a fixed reference to avoid impure function calls during render
+  const expirationDate = new Date(expirationTime);
+  // We'll use the API's updatedAt or createdAt as a reference, or just show the date
+  return {
+    expirationDate,
+    formattedDate: expirationDate.toLocaleDateString(),
+  };
+}
+
+export function ApiRegistryCard({
+  api,
+  onRegenerateKey,
+  onSoftDelete,
+  onCopyApiId,
+}: ApiRegistryCardProps) {
+  const { expirationDate, formattedDate } = getExpirationInfo(
+    api.expirationTime,
+  );
+  // For client-side time comparison, we'll use a ClientOnly wrapper or show relative time
+  const isExpired = false; // Will be computed on client
+  const daysUntilExpiration = 0; // Will be computed on client
+
+  return (
+    <Card className="group relative">
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between">
+          <div className="space-y-1 min-w-0 flex-1">
+            <CardTitle className="text-lg font-semibold truncate pr-8">
+              <Link
+                href={`/dashboard/apis/${api.id}`}
+                className="hover:text-primary transition-colors"
+              >
+                {api.name}
+              </Link>
+            </CardTitle>
+            <CardDescription className="text-sm line-clamp-2">
+              {api.description || 'No description'}
+            </CardDescription>
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-4 right-4 h-8 w-8"
+              >
+                <RiMoreLine className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem asChild>
+                <Link href={`/dashboard/apis/${api.id}`}>
+                  <RiEditLine className="mr-2 h-4 w-4" />
+                  View Details
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onCopyApiId(api.apiId)}>
+                <RiFileCopyLine className="mr-2 h-4 w-4" />
+                Copy API ID
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onRegenerateKey(api.id)}>
+                <RiKey2Line className="mr-2 h-4 w-4" />
+                Regenerate Key
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => onSoftDelete(api.id)}
+                className="text-destructive focus:text-destructive"
+                disabled={!api.isActive}
+              >
+                <RiDeleteBinLine className="mr-2 h-4 w-4" />
+                Deactivate
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </CardHeader>
+      <CardContent className="pt-0">
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <ApiStatusBadge
+              isActive={api.isActive}
+              expirationTime={api.expirationTime}
+            />
+            <span className="text-xs text-muted-foreground font-mono">
+              {api.apiId}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 text-sm">
+            <div>
+              <span className="text-muted-foreground">Permission</span>
+              <p className="font-medium">{api.permission}</p>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Collections</span>
+              <p className="font-medium">{api.recordDefinitions.length}</p>
+            </div>
+          </div>
+
+          <div className="pt-2 border-t">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-muted-foreground">
+                Expires {formattedDate}
+              </span>
+              {api.hasDocsAccess && (
+                <span className="text-green-600">Docs Enabled</span>
+              )}
+            </div>
+          </div>
+
+          {api.endpoints.length > 0 && (
+            <div className="pt-2">
+              <p className="text-xs text-muted-foreground mb-1">Endpoints:</p>
+              <div className="space-y-1">
+                {api.endpoints.slice(0, 2).map((endpoint, idx) => (
+                  <p
+                    key={idx}
+                    className="text-xs font-mono truncate text-muted-foreground"
+                  >
+                    {endpoint}
+                  </p>
+                ))}
+                {api.endpoints.length > 2 && (
+                  <p className="text-xs text-muted-foreground">
+                    +{api.endpoints.length - 2} more
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
