@@ -26,6 +26,7 @@ import { Separator } from '@/components/ui/separator';
 import { Spinner } from '@/components/ui/spinner';
 import { ApiStatusBadge } from './api-status-badge';
 import { SchemaViewer } from './schema-viewer';
+import { USER_ROUTES } from '@/constants/routes';
 import {
   Dialog,
   DialogContent,
@@ -109,7 +110,7 @@ export function ApiDetailView({ apiId }: ApiDetailViewProps) {
     if (hardDeleteRegistryApi.fulfilled.match(result)) {
       toast.success('API permanently deleted');
       setHardDeleteDialogOpen(false);
-      router.push('/dashboard/apis');
+      router.push(USER_ROUTES.APIS);
     }
   };
 
@@ -138,7 +139,7 @@ export function ApiDetailView({ apiId }: ApiDetailViewProps) {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-4">
           <Button variant="outline" size="icon" asChild>
-            <Link href="/dashboard/apis">
+            <Link href="/my-apis">
               <RiArrowLeftLine className="h-4 w-4" />
             </Link>
           </Button>
@@ -153,13 +154,13 @@ export function ApiDetailView({ apiId }: ApiDetailViewProps) {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" asChild>
-            <Link href={`/dashboard/apis/${apiId}/test`}>
+            <Link href={`/my-apis/${apiId}/test`}>
               <RiTestTubeLine className="mr-2 h-4 w-4" />
               Test API
             </Link>
           </Button>
           <Button variant="outline" asChild>
-            <Link href={`/dashboard/apis/${apiId}/edit`}>
+            <Link href={`/my-apis/${apiId}/edit`}>
               <RiEditLine className="mr-2 h-4 w-4" />
               Edit
             </Link>

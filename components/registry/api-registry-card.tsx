@@ -65,7 +65,7 @@ export function ApiRegistryCard({
           <div className="space-y-1 min-w-0 flex-1">
             <CardTitle className="text-lg font-semibold truncate pr-8">
               <Link
-                href={`/dashboard/apis/${api.id}`}
+                href={`/my-apis/${api.id}`}
                 className="hover:text-primary transition-colors"
               >
                 {api.name}
@@ -87,7 +87,7 @@ export function ApiRegistryCard({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
               <DropdownMenuItem asChild>
-                <Link href={`/dashboard/apis/${api.id}`}>
+                <Link href={`/my-apis/${api.id}`}>
                   <RiEditLine className="mr-2 h-4 w-4" />
                   View Details
                 </Link>

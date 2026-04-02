@@ -19,6 +19,7 @@ import {
 } from '@/lib/store/subscription-store';
 import { toast } from 'sonner';
 import type { Tier } from '@/types/payments.types';
+import { USER_ROUTES } from '@/constants/routes';
 
 export default function PricingPage() {
   const router = useRouter();
@@ -91,8 +92,9 @@ export default function PricingPage() {
     if (validatedDiscount) {
       queryParams.append('discountCode', validatedDiscount.code);
     }
-
-    router.push(`/dashboard/subscription/checkout?${queryParams.toString()}`);
+    router.push(
+      `${USER_ROUTES.SUBSCRIPTION_CHECKOUT}?${queryParams.toString()}`,
+    );
   };
 
   const isLoading = isLoadingTiers || isLoadingSubscription;

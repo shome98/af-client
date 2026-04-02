@@ -1,5 +1,5 @@
 import { AdminGuard } from '@/components/auth/auth-guard';
-import { AdminSidebarLayout } from '@/components/layouts/admin-sidebar-layout';
+import { UserSidebarLayout } from '@/components/layouts/user-sidebar-layout';
 
 export default function AdminLayout({
   children,
@@ -8,7 +8,7 @@ export default function AdminLayout({
 }) {
   return (
     <AdminGuard>
-      <AdminSidebarLayout>{children}</AdminSidebarLayout>
+      <UserSidebarLayout>{children}</UserSidebarLayout>
     </AdminGuard>
   );
 }

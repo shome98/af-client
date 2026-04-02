@@ -11,11 +11,21 @@ import { logoutUser } from '@/lib/store/auth-store';
 import { useAppDispatch, useAppSelector } from '@/lib/store/hooks';
 import { cn } from '@/lib/utils';
 import Logo from './common/Logo';
+import { SIDEBAR_ROUTES, USER_ROUTES, PUBLIC_ROUTES } from '@/constants/routes';
 
 const NavBar = () => {
   const pathname = usePathname();
   const dispatch = useAppDispatch();
   const { user, isBootstrapping } = useAppSelector((state) => state.auth);
+
+  // Don't render navbar for routes with sidebar navigation
+  const hasSidebar = SIDEBAR_ROUTES.some(
+    (route: string) => pathname === route || pathname.startsWith(route + '/'),
+  );
+
+  if (hasSidebar) {
+    return null;
+  }
 
   const navClass = (href: string) =>
     cn(
@@ -46,13 +56,22 @@ const NavBar = () => {
           <div className="hidden items-center gap-4 md:flex">
             {user ? (
               <>
-                <Link href="/dashboard" className={navClass('/dashboard')}>
+                <Link
+                  href={USER_ROUTES.DASHBOARD}
+                  className={navClass(USER_ROUTES.DASHBOARD)}
+                >
                   Dashboard
                 </Link>
-                <Link href="/profile" className={navClass('/profile')}>
+                <Link
+                  href={USER_ROUTES.PROFILE}
+                  className={navClass(USER_ROUTES.PROFILE)}
+                >
                   Profile
                 </Link>
-                <Link href="/create-api" className={navClass('/create-api')}>
+                <Link
+                  href={USER_ROUTES.CREATE_API}
+                  className={navClass(USER_ROUTES.CREATE_API)}
+                >
                   Create Api
                 </Link>
                 {user.role === 'admin' ? (
@@ -63,10 +82,16 @@ const NavBar = () => {
               </>
             ) : (
               <>
-                <Link href="/login" className={navClass('/login')}>
+                <Link
+                  href={PUBLIC_ROUTES.LOGIN}
+                  className={navClass(PUBLIC_ROUTES.LOGIN)}
+                >
                   Login
                 </Link>
-                <Link href="/register" className={navClass('/register')}>
+                <Link
+                  href={PUBLIC_ROUTES.REGISTER}
+                  className={navClass(PUBLIC_ROUTES.REGISTER)}
+                >
                   Register
                 </Link>
               </>

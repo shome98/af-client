@@ -143,7 +143,7 @@ export function ApiTester({ apiId }: ApiTesterProps) {
       {/* Header */}
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="sm" asChild>
-          <Link href={`/dashboard/apis/${apiId}`}>
+          <Link href={`/my-apis/${apiId}`}>
             <RiArrowLeftLine className="h-4 w-4 mr-1" />
             Back to API
           </Link>

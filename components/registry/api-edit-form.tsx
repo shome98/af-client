@@ -28,6 +28,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
+import { USER_ROUTES } from '@/constants/routes';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAppDispatch, useAppSelector } from '@/lib/store/hooks';
 import {
@@ -153,7 +154,7 @@ export function ApiEditForm({ apiId }: ApiEditFormProps) {
 
     if (updateRegistryApi.fulfilled.match(result)) {
       toast.success('API updated successfully');
-      router.push(`/dashboard/apis/${apiId}`);
+      router.push(USER_ROUTES.API_DETAIL(apiId));
     }
   };
 
@@ -170,7 +171,7 @@ export function ApiEditForm({ apiId }: ApiEditFormProps) {
       {/* Header */}
       <div className="flex items-center gap-4">
         <Button variant="outline" size="icon" asChild>
-          <Link href={`/dashboard/apis/${apiId}`}>
+          <Link href={`/my-apis/${apiId}`}>
             <RiArrowLeftLine className="h-4 w-4" />
           </Link>
         </Button>
@@ -373,7 +374,7 @@ export function ApiEditForm({ apiId }: ApiEditFormProps) {
             )}
           </Button>
           <Button type="button" variant="outline" asChild>
-            <Link href={`/dashboard/apis/${apiId}`}>Cancel</Link>
+            <Link href={`/my-apis/${apiId}`}>Cancel</Link>
           </Button>
         </div>
       </form>

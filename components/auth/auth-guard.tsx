@@ -1,10 +1,10 @@
-"use client"
+'use client';
 
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
-import { Spinner } from "@/components/ui/spinner"
-import { useAppSelector } from "@/lib/store/hooks"
+import { Spinner } from '@/components/ui/spinner';
+import { useAppSelector } from '@/lib/store/hooks';
 
 function GuardFallback() {
   return (
@@ -14,76 +14,82 @@ function GuardFallback() {
         Restoring session...
       </div>
     </div>
-  )
+  );
 }
 
 export function ProtectedGuard({ children }: { children: React.ReactNode }) {
-  const router = useRouter()
-  const { isBootstrapping, isAuthenticated } = useAppSelector((state) => state.auth)
+  const router = useRouter();
+  const { isBootstrapping, isAuthenticated } = useAppSelector(
+    (state) => state.auth,
+  );
 
   useEffect(() => {
     if (!isBootstrapping && !isAuthenticated) {
-      router.replace("/login")
+      router.replace('/login');
     }
-  }, [isAuthenticated, isBootstrapping, router])
+  }, [isAuthenticated, isBootstrapping, router]);
 
   if (isBootstrapping) {
-    return <GuardFallback />
+    return <GuardFallback />;
   }
 
   if (!isAuthenticated) {
     // Let the route transition happen without leaving the stale protected shell onscreen.
-    return null
+    return null;
   }
 
-  return <>{children}</>
+  return <>{children}</>;
 }
 
 export function AdminGuard({ children }: { children: React.ReactNode }) {
-  const router = useRouter()
-  const { isBootstrapping, isAuthenticated, user } = useAppSelector((state) => state.auth)
+  const router = useRouter();
+  const { isBootstrapping, isAuthenticated, user } = useAppSelector(
+    (state) => state.auth,
+  );
 
   useEffect(() => {
     if (!isBootstrapping && !isAuthenticated) {
-      router.replace("/login")
-      return
+      router.replace('/login');
+      return;
     }
 
-    if (!isBootstrapping && isAuthenticated && user?.role !== "admin") {
-      router.replace("/dashboard")
+    if (!isBootstrapping && isAuthenticated && user?.role !== 'admin') {
+      router.replace('/my-dashboard');
     }
-  }, [isAuthenticated, isBootstrapping, router, user?.role])
+  }, [isAuthenticated, isBootstrapping, router, user?.role]);
 
   if (isBootstrapping) {
-    return <GuardFallback />
+    return <GuardFallback />;
   }
 
-  if (!isAuthenticated || user?.role !== "admin") {
+  if (!isAuthenticated || user?.role !== 'admin') {
     // Once auth is settled, hand off to the redirect instead of rendering the fallback forever.
-    return null
+    return null;
   }
 
-  return <>{children}</>
+  return <>{children}</>;
 }
 
 export function GuestGuard({ children }: { children: React.ReactNode }) {
-  const router = useRouter()
-  const { isBootstrapping, isAuthenticated } = useAppSelector((state) => state.auth)
+  const router = useRouter();
+  const { isBootstrapping, isAuthenticated } = useAppSelector(
+    (state) => state.auth,
+  );
 
   useEffect(() => {
     if (!isBootstrapping && isAuthenticated) {
-      router.replace("/dashboard")
+      router.replace('/my-dashboard');
     }
-  }, [isAuthenticated, isBootstrapping, router])
+  }, [isAuthenticated, isBootstrapping, router]);
 
   if (isBootstrapping) {
-    return <GuardFallback />
+    return <GuardFallback />;
   }
 
   if (isAuthenticated) {
     // Auth pages should disappear immediately after login while the redirect resolves.
-    return null
+    return null;
   }
 
-  return <>{children}</>
+  return <>{children}</>;
 }

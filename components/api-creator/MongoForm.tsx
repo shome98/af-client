@@ -42,6 +42,7 @@ import {
 import { useAppDispatch, useAppSelector } from '@/lib/store/hooks';
 import { createDynamicApi } from '@/lib/store/mongo-store';
 import { toast } from 'sonner';
+import { API_RESPONSE } from '@/constants/routes';
 
 // Permission options
 const PERMISSION_OPTIONS = ['SCRUD', 'SCRUDQ', 'MCRUD', 'MCRUDQ'] as const;
@@ -266,7 +267,7 @@ export default function MongoForm() {
 
     if (createDynamicApi.fulfilled.match(result)) {
       toast.success('API created successfully!');
-      router.push('/api-response');
+      router.push(API_RESPONSE);
     } else if (result.payload && typeof result.payload === 'object') {
       const errorPayload = result.payload as { message?: string };
       toast.error(errorPayload.message || 'Failed to create API');
@@ -531,7 +532,7 @@ function RecordCard({
         )}
 
         {/* Fields Accordion */}
-        <Accordion type="multiple" className="space-y-2">
+        <Accordion type="multiple" className="space-y-3">
           {fieldDefs.map((field, fieldIndex) => (
             <FieldAccordionItem
               key={field.id}
@@ -593,7 +594,7 @@ function FieldAccordionItem({
   return (
     <AccordionItem
       value={`field-${recordIndex}-${fieldIndex}`}
-      className="border rounded-lg px-4"
+      className="border rounded-lg px-4 bg-card/50"
     >
       <AccordionTrigger className="hover:no-underline py-3">
         <div className="flex items-center gap-3">

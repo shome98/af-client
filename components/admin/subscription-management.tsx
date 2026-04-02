@@ -171,14 +171,6 @@ export function SubscriptionManagement() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/admin">
-              <RiArrowLeftLine className="h-4 w-4 mr-1" />
-              Back to Admin
-            </Link>
-          </Button>
-        </div>
         <Button
           variant="outline"
           onClick={() => dispatch(fetchAllSubscriptionsAdmin({}))}
