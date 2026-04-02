@@ -18,42 +18,6 @@ export const APP = {
   githubUrl: publicUrls.github,
 } as const;
 
-export const NAV_LOGGEDIN = [
-  {
-    name: 'Dashboard',
-    path: '/dashboard',
-  },
-  {
-    name: 'Admin',
-    path: '/admin',
-  },
-  {
-    name: 'Profile',
-    path: '/profile',
-  },
-  {
-    name: 'Logout',
-  },
-] as const;
-export const NAV_GUEST = [
-  {
-    name: 'Login',
-    path: '/login',
-  },
-  {
-    name: 'Register',
-    path: '/register',
-  },
-  {
-    name: 'Get Started',
-    path: '/register',
-  },
-  {
-    name: 'About',
-    path: '/',
-  },
-] as const;
-
 export const LANDING = {
   hero: {
     headline: 'Instant REST APIs,\nwithout the boilerplate.',
