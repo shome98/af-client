@@ -17,8 +17,6 @@ import {
   RiUserSettingsLine,
   RiMoneyDollarCircleLine,
 } from '@remixicon/react';
-
-import { Button } from '@/components/ui/button';
 import {
   Sidebar,
   SidebarContent,
@@ -38,7 +36,6 @@ import {
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { useAppDispatch, useAppSelector } from '@/lib/store/hooks';
 import { logoutUser } from '@/lib/store/auth-store';
-import { cn } from '@/lib/utils';
 import { USER_ROUTES, PUBLIC_ROUTES, ADMIN_ROUTES } from '@/constants/routes';
 import { useTheme } from 'next-themes';
 

@@ -45,7 +45,6 @@ import {
   clearErrors,
 } from '@/lib/store/registry-store';
 import { toast } from 'sonner';
-import type { ApiRegistryItem } from '@/types/registry.types';
 
 interface ApiDetailViewProps {
   apiId: string;

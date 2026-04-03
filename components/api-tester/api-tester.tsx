@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { RiArrowLeftLine, RiTestTubeLine } from '@remixicon/react';
 
 import { Button } from '@/components/ui/button';
@@ -33,7 +32,6 @@ interface ApiResponse {
 }
 
 export function ApiTester({ apiId }: ApiTesterProps) {
-  const router = useRouter();
   const dispatch = useAppDispatch();
   const { selectedApi, isLoading, error } = useAppSelector(
     (state) => state.registry,

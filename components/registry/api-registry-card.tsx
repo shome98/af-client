@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useSyncExternalStore } from 'react';
 import {
   RiMoreLine,
   RiFileCopyLine,
@@ -34,14 +35,27 @@ interface ApiRegistryCardProps {
   onCopyApiId: (apiId: string) => void;
 }
 
-// Helper to get expiration info - computed during render with server time reference
-function getExpirationInfo(expirationTime: string) {
-  // Use a fixed reference to avoid impure function calls during render
+// Safe time computation for React 19 - uses useSyncExternalStore pattern
+const getServerSnapshot = () => Date.now();
+const subscribe = () => () => {};
+
+// Helper to get expiration info - safe for React 19 render purity
+function useExpirationInfo(expirationTime: string) {
+  // Use useSyncExternalStore for safe time computation in React 19
+  const now = useSyncExternalStore(subscribe, getServerSnapshot, getServerSnapshot);
+  
   const expirationDate = new Date(expirationTime);
-  // We'll use the API's updatedAt or createdAt as a reference, or just show the date
+  const formattedDate = expirationDate.toLocaleDateString();
+  const isExpired = now > expirationDate.getTime();
+  const daysUntilExpiration = Math.ceil(
+    (expirationDate.getTime() - now) / (1000 * 60 * 60 * 24)
+  );
+  
   return {
     expirationDate,
-    formattedDate: expirationDate.toLocaleDateString(),
+    formattedDate,
+    isExpired,
+    daysUntilExpiration,
   };
 }
 
@@ -51,12 +65,9 @@ export function ApiRegistryCard({
   onSoftDelete,
   onCopyApiId,
 }: ApiRegistryCardProps) {
-  const { expirationDate, formattedDate } = getExpirationInfo(
+  const { formattedDate} = useExpirationInfo(
     api.expirationTime,
   );
-  // For client-side time comparison, we'll use a ClientOnly wrapper or show relative time
-  const isExpired = false; // Will be computed on client
-  const daysUntilExpiration = 0; // Will be computed on client
 
   return (
     <Card className="group relative">
