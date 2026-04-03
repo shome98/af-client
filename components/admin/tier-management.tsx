@@ -1,15 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import {
   RiAddLine,
   RiEditLine,
   RiDeleteBinLine,
-  RiArrowLeftLine,
   RiCheckLine,
   RiCloseLine,
 } from '@remixicon/react';
@@ -53,7 +51,6 @@ import {
   deleteTierAdmin,
   clearErrors,
 } from '@/lib/store/subscription-store';
-import type { PermissionType } from '@/types/mongo.types';
 import { toast } from 'sonner';
 
 const tierSchema = z.object({
@@ -86,7 +83,7 @@ export function TierManagement() {
     handleSubmit,
     reset,
     setValue,
-    watch,
+    control,
     formState: { errors },
   } = useForm<TierFormData>({
     resolver: zodResolver(tierSchema),
@@ -96,7 +93,7 @@ export function TierManagement() {
     },
   });
 
-  const isActive = watch('isActive');
+  const isActive = useWatch({ control, name: 'isActive' });
 
   useEffect(() => {
     dispatch(fetchAllTiersAdmin({}));
@@ -185,13 +182,10 @@ export function TierManagement() {
     setIsDeleteDialogOpen(true);
   };
 
-  const TierForm = ({
-    onSubmit,
-    submitLabel,
-  }: {
-    onSubmit: (data: TierFormData) => void;
-    submitLabel: string;
-  }) => (
+  const renderTierForm = (
+    onSubmit: (data: TierFormData) => void,
+    submitLabel: string,
+  ) => (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="name">Name</Label>
@@ -388,7 +382,7 @@ export function TierManagement() {
             <DialogTitle>Create New Tier</DialogTitle>
             <DialogDescription>Add a new subscription tier</DialogDescription>
           </DialogHeader>
-          <TierForm onSubmit={handleCreate} submitLabel="Create Tier" />
+          {renderTierForm(handleCreate, 'Create Tier')}
         </DialogContent>
       </Dialog>
 
@@ -399,7 +393,7 @@ export function TierManagement() {
             <DialogTitle>Edit Tier</DialogTitle>
             <DialogDescription>Update tier details</DialogDescription>
           </DialogHeader>
-          <TierForm onSubmit={handleEdit} submitLabel="Save Changes" />
+          {renderTierForm(handleEdit, 'Save Changes')}
         </DialogContent>
       </Dialog>
 

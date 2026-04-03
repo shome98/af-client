@@ -1,17 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import {
   RiAddLine,
   RiEditLine,
   RiDeleteBinLine,
-  RiArrowLeftLine,
-  RiCheckLine,
-  RiCloseLine,
 } from '@remixicon/react';
 
 import { Button } from '@/components/ui/button';
@@ -85,7 +81,7 @@ export function DiscountManagement() {
     handleSubmit,
     reset,
     setValue,
-    watch,
+    control,
     formState: { errors },
   } = useForm<DiscountFormData>({
     resolver: zodResolver(discountSchema),
@@ -96,7 +92,7 @@ export function DiscountManagement() {
     },
   });
 
-  const isActive = watch('isActive');
+  const isActive = useWatch({ control, name: 'isActive' });
 
   useEffect(() => {
     dispatch(fetchAllDiscountsAdmin());
@@ -191,13 +187,10 @@ export function DiscountManagement() {
     return new Date(validUntil) < new Date();
   };
 
-  const DiscountForm = ({
-    onSubmit,
-    submitLabel,
-  }: {
-    onSubmit: (data: DiscountFormData) => void;
-    submitLabel: string;
-  }) => (
+  const renderDiscountForm = (
+    onSubmit: (data: DiscountFormData) => void,
+    submitLabel: string,
+  ) => (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="tierId">Tier</Label>
@@ -420,7 +413,7 @@ export function DiscountManagement() {
               Add a new promotional discount code
             </DialogDescription>
           </DialogHeader>
-          <DiscountForm onSubmit={handleCreate} submitLabel="Create Discount" />
+          {renderDiscountForm(handleCreate, 'Create Discount')}
         </DialogContent>
       </Dialog>
 
@@ -431,7 +424,7 @@ export function DiscountManagement() {
             <DialogTitle>Edit Discount</DialogTitle>
             <DialogDescription>Update discount details</DialogDescription>
           </DialogHeader>
-          <DiscountForm onSubmit={handleEdit} submitLabel="Save Changes" />
+          {renderDiscountForm(handleEdit, 'Save Changes')}
         </DialogContent>
       </Dialog>
 

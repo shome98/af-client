@@ -1,15 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   useForm,
   useFieldArray,
+  useWatch,
   Controller,
   Control,
   UseFormRegister,
   FieldErrors,
-  UseFormWatch,
 } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -151,6 +151,7 @@ const recordDefinitionSchema = z.object({
     .min(1, 'At least one field is required'),
 });
 
+/*
 // Stage-specific schemas
 const stage1Schema = z.object({
   permission: z.enum(PERMISSION_OPTIONS),
@@ -178,7 +179,7 @@ const stage4Schema = z.object({
     .min(1, 'At least one record definition is required')
     .max(20, 'Maximum 20 record definitions allowed'),
 });
-
+*/
 // Full schema
 const apiConfigSchema = z.object({
   permission: z.enum(PERMISSION_OPTIONS),
@@ -237,7 +238,6 @@ export default function MongoForm() {
     register,
     handleSubmit,
     control,
-    watch,
     trigger,
     formState: { errors },
   } = useForm<ApiConfigFormValues>({
@@ -251,8 +251,8 @@ export default function MongoForm() {
     },
   });
 
-  const permission = watch('permission');
-  const textIndexStrategy = watch('textIndexStrategy');
+  const permission = useWatch({ control, name: 'permission' });
+  const textIndexStrategy = useWatch({ control, name: 'textIndexStrategy' });
   const hasQuerySupport = supportsQueries(permission);
   const hasMultipleRecords = supportsMultipleRecords(permission);
 
@@ -796,7 +796,6 @@ export default function MongoForm() {
                     recordIndex={recordIndex}
                     control={control}
                     register={register}
-                    watch={watch}
                     errors={errors}
                     onRemove={() => removeRecord(recordIndex)}
                     canRemove={records.length > 1}
@@ -846,7 +845,6 @@ interface RecordCardProps {
   recordIndex: number;
   control: Control<ApiConfigFormValues>;
   register: UseFormRegister<ApiConfigFormValues>;
-  watch: UseFormWatch<ApiConfigFormValues>;
   errors: FieldErrors<ApiConfigFormValues>;
   onRemove: () => void;
   canRemove: boolean;
@@ -859,7 +857,6 @@ function RecordCard({
   recordIndex,
   control,
   register,
-  watch,
   errors,
   onRemove,
   canRemove,
@@ -877,7 +874,10 @@ function RecordCard({
   });
 
   const recordErrors = errors.recordDefinitions?.[recordIndex];
-  const recordName = watch(`recordDefinitions.${recordIndex}.record_name`);
+  const recordName = useWatch({
+    control,
+    name: `recordDefinitions.${recordIndex}.record_name`,
+  });
 
   return (
     <Card>

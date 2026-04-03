@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { RiArrowLeftLine, RiSaveLine } from '@remixicon/react';
@@ -95,6 +95,13 @@ export function ApiEditForm({ apiId }: ApiEditFormProps) {
       dbUri: '',
     },
   });
+
+  // Use useWatch for React Compiler compatibility
+  const permission = useWatch({ control: form.control, name: 'permission' });
+  const isActive = useWatch({ control: form.control, name: 'isActive' });
+  const softDelete = useWatch({ control: form.control, name: 'softDelete' });
+  const hasDocsAccess = useWatch({ control: form.control, name: 'hasDocsAccess' });
+  const textIndexStrategy = useWatch({ control: form.control, name: 'textIndexStrategy' });
 
   useEffect(() => {
     dispatch(fetchApiById(apiId));
@@ -227,7 +234,7 @@ export function ApiEditForm({ apiId }: ApiEditFormProps) {
             <div className="space-y-2">
               <Label htmlFor="permission">Permission</Label>
               <Select
-                value={form.watch('permission')}
+                value={permission}
                 onValueChange={(value) =>
                   form.setValue('permission', value as PermissionType)
                 }
@@ -261,7 +268,7 @@ export function ApiEditForm({ apiId }: ApiEditFormProps) {
                 </p>
               </div>
               <Switch
-                checked={form.watch('isActive')}
+                checked={isActive}
                 onCheckedChange={(checked) =>
                   form.setValue('isActive', checked)
                 }
@@ -277,7 +284,7 @@ export function ApiEditForm({ apiId }: ApiEditFormProps) {
                 </p>
               </div>
               <Switch
-                checked={form.watch('softDelete')}
+                checked={softDelete}
                 onCheckedChange={(checked) =>
                   form.setValue('softDelete', checked)
                 }
@@ -292,7 +299,7 @@ export function ApiEditForm({ apiId }: ApiEditFormProps) {
                 </p>
               </div>
               <Switch
-                checked={form.watch('hasDocsAccess')}
+                checked={hasDocsAccess}
                 onCheckedChange={(checked) =>
                   form.setValue('hasDocsAccess', checked)
                 }
@@ -302,7 +309,7 @@ export function ApiEditForm({ apiId }: ApiEditFormProps) {
             <div className="space-y-2">
               <Label>Text Index Strategy</Label>
               <Select
-                value={form.watch('textIndexStrategy') || 'none'}
+                value={textIndexStrategy || 'none'}
                 onValueChange={(value) =>
                   form.setValue(
                     'textIndexStrategy',
