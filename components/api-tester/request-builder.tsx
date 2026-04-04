@@ -108,7 +108,8 @@ export function RequestBuilder({
   };
 
   const endpoint = useCustomEndpoint ? customEndpoint : selectedEndpoint;
-  const fullUrl = `${baseUrl}${endpoint}`;
+  // const fullUrl = `${baseUrl}${endpoint}`;
+  const fullUrl = `${endpoint}`;
 
   return (
     <div className="space-y-6">

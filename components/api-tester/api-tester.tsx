@@ -69,8 +69,11 @@ export function ApiTester({ apiId }: ApiTesterProps) {
 
     try {
       // Build URL with query params
+      // const url = new URL(
+      //   `${MONGO_FACTORY_BASE_URL}/api/v1/temp/${selectedApi.apiId}${config.endpoint}`,
+      // );
       const url = new URL(
-        `${MONGO_FACTORY_BASE_URL}/api/v1/temp/${selectedApi.apiId}${config.endpoint}`,
+        `${config.endpoint}`,
       );
       Object.entries(config.queryParams).forEach(([key, value]) => {
         url.searchParams.append(key, value);
