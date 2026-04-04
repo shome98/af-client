@@ -35,14 +35,51 @@ interface ApiRegistryCardProps {
   onCopyApiId: (apiId: string) => void;
 }
 
-// Safe time computation for React 19 - uses useSyncExternalStore pattern
-const getServerSnapshot = () => Date.now();
-const subscribe = () => () => {};
+type Listener = () => void;
+
+// Time store for React 19: getSnapshot must be stable until subscribe notifies.
+let clientNow = Date.now();
+const serverNow = Date.now();
+const listeners = new Set<Listener>();
+let interval: ReturnType<typeof setInterval> | null = null;
+
+function emit() {
+  for (const listener of listeners) listener();
+}
+
+function tick() {
+  clientNow = Date.now();
+  emit();
+}
+
+function ensureInterval() {
+  if (interval) return;
+  interval = setInterval(tick, 60_000);
+}
+
+function subscribe(listener: Listener) {
+  listeners.add(listener);
+  ensureInterval();
+  return () => {
+    listeners.delete(listener);
+    if (listeners.size === 0 && interval) {
+      clearInterval(interval);
+      interval = null;
+    }
+  };
+}
+
+function getSnapshot() {
+  return clientNow;
+}
+
+function getServerSnapshot() {
+  return serverNow;
+}
 
 // Helper to get expiration info - safe for React 19 render purity
 function useExpirationInfo(expirationTime: string) {
-  // Use useSyncExternalStore for safe time computation in React 19
-  const now = useSyncExternalStore(subscribe, getServerSnapshot, getServerSnapshot);
+  const now = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   
   const expirationDate = new Date(expirationTime);
   const formattedDate = expirationDate.toLocaleDateString();
