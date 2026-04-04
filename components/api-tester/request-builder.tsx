@@ -117,7 +117,7 @@ export function RequestBuilder({
       <div className="space-y-4">
         <div className="flex gap-2">
           <Select value={method} onValueChange={setMethod}>
-            <SelectTrigger className="w-[120px]">
+            <SelectTrigger className="w-30">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
