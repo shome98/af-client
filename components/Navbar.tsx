@@ -44,7 +44,7 @@ const NavBar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/80 bg-background/85 backdrop-blur w-screen">
+    <header className="sticky top-0 z-40 w-full border-b border-border/80 bg-background/85 backdrop-blur">
       <nav className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-3">
         <div className="flex items-center gap-6">
           <Link

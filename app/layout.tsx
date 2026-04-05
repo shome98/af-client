@@ -26,10 +26,11 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-background text-foreground">
         <Providers initialUser={null}>
-          <div className="relative flex min-h-screen flex-col">
-            <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,rgba(32,129,226,0.11),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(245,158,11,0.10),transparent_26%)]" />
+          <div className="relative min-h-screen">
+            {/* <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,rgba(32,129,226,0.11),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(245,158,11,0.10),transparent_26%)]" /> */}
+            <div className="pointer-events-none absolute " />
             <NavBar />
-            <main className="flex-1">{children}</main>
+            <main>{children}</main>
             <Footer />
           </div>
         </Providers>
