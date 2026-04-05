@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner"
 import { bootstrapAuth } from "@/lib/store/auth-store"
 import { createAppStore, type AppStore } from "@/lib/store"
 import type { User } from "@/types/auth.types"
+import { PostHogProvider } from "@/components/posthog-provider"
 
 export default function Providers({
   children,
@@ -23,11 +24,13 @@ export default function Providers({
   }, [initialUser, store])
 
   return (
-    <Provider store={store}>
-      <ThemeProvider attribute="class" defaultTheme="system" storageKey="af-theme" enableSystem>
-        {children}
-        <Toaster richColors position="top-right" />
-      </ThemeProvider>
-    </Provider>
+    <PostHogProvider>
+      <Provider store={store}>
+        <ThemeProvider attribute="class" defaultTheme="system" storageKey="af-theme" enableSystem>
+          {children}
+          <Toaster richColors position="top-right" />
+        </ThemeProvider>
+      </Provider>
+    </PostHogProvider>
   )
 }
