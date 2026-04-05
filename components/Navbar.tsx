@@ -44,7 +44,7 @@ const NavBar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/80 bg-background/85 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-border/80 bg-background/85 backdrop-blur w-screen">
       <nav className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-3">
         <div className="flex items-center gap-6">
           <Link
@@ -74,11 +74,6 @@ const NavBar = () => {
                 >
                   Create Api
                 </Link>
-                {user.role === 'admin' ? (
-                  <Link href="/admin" className={navClass('/admin')}>
-                    Admin
-                  </Link>
-                ) : null}
               </>
             ) : (
               <>

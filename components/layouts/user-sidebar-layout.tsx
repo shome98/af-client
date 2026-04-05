@@ -38,6 +38,7 @@ import { useAppDispatch, useAppSelector } from '@/lib/store/hooks';
 import { logoutUser } from '@/lib/store/auth-store';
 import { USER_ROUTES, PUBLIC_ROUTES, ADMIN_ROUTES } from '@/constants/routes';
 import { useTheme } from 'next-themes';
+import { APP } from '@/constants/landing.constant';
 
 const userNavItems = [
   {
@@ -111,9 +112,9 @@ function UserSidebar() {
                   <RiBox3Line className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">ApiHub</span>
+                  <span className="truncate font-semibold">{APP.name}</span>
                   <span className="truncate text-xs text-muted-foreground">
-                    API Factory
+                    {APP.subName}
                   </span>
                 </div>
               </Link>

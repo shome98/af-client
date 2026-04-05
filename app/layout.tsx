@@ -6,10 +6,11 @@ import Providers from '@/components/providers';
 
 import './globals.css';
 import Footer from '@/components/landing/Footer';
+import { APP } from '@/constants/landing.constant';
 
 export const metadata: Metadata = {
-  title: 'Api Hub',
-  description: 'Spin up rest api in minutes.',
+  title: APP.name,
+  description: APP.meta_description,
 };
 
 export default function RootLayout({

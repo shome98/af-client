@@ -7,10 +7,13 @@ export const publicUrls = {
   github: 'https://github.com/crudfactory',
   support: 'support@crudfactory.dev',
 };
+
 export const APP = {
-  name: 'ApiHub',
+  name: 'Own API',
+  subName:'API Factory',
   tagline: 'Spin up REST APIs in seconds — no boilerplate, no hassle.',
   shortDesc: 'Instant, configurable REST APIs.',
+  meta_description:'Spin up rest apis in minutes.',
   logoSuffix: ' · ', // sits between logo name and tier badge
   version: 'v1',
   supportEmail: publicUrls.support,

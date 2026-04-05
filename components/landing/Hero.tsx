@@ -1,6 +1,5 @@
 import { LANDING } from '@/constants/landing.constant';
 import Link from 'next/link';
-import React from 'react';
 import { Button } from '../ui/button';
 
 const Hero = () => {
@@ -15,10 +14,10 @@ const Hero = () => {
         </p>
         <div className="flex gap-4 flex-wrap justify-center">
           <Link href={'/register'}>
-            <Button>{LANDING.hero.ctaPrimary}</Button>
+            <Button variant='default'>{LANDING.hero.ctaPrimary}</Button>
           </Link>
           <a href="#features">
-            <Button>{LANDING.hero.ctaSecondary}</Button>
+            <Button variant='outline'>{LANDING.hero.ctaSecondary}</Button>
           </a>
         </div>
       </section>
