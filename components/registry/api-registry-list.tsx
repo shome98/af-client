@@ -169,7 +169,7 @@ export function ApiRegistryList() {
           />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-45">
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
           <SelectContent>
@@ -228,7 +228,7 @@ export function ApiRegistryList() {
                   value={String(pagination.limit)}
                   onValueChange={handleLimitChange}
                 >
-                  <SelectTrigger className="w-[100px]">
+                  <SelectTrigger className="w-25">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
