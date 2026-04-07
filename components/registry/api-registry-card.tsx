@@ -144,7 +144,7 @@ export function ApiRegistryCard({
                 <RiFileCopyLine className="mr-2 h-4 w-4" />
                 Copy API ID
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onRegenerateKey(api.id)}>
+              <DropdownMenuItem onClick={() => onRegenerateKey(api.id)} disabled>
                 <RiKey2Line className="mr-2 h-4 w-4" />
                 Regenerate Key
               </DropdownMenuItem>

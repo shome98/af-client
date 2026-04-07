@@ -296,6 +296,7 @@ export function ApiDetailView({ apiId }: ApiDetailViewProps) {
                 variant="outline"
                 className="w-full justify-start"
                 onClick={() => setRegenerateDialogOpen(true)}
+                disabled
               >
                 <RiKey2Line className="mr-2 h-4 w-4" />
                 Regenerate API Key
