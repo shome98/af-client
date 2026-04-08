@@ -48,7 +48,7 @@ function CheckoutContent() {
 
   const [selectedProvider, setSelectedProvider] = useState<
     'razorpay' | 'stripe' | 'paypal'
-  >('razorpay');
+  >('stripe');
 
   useEffect(() => {
     if (!tierId) {
@@ -198,6 +198,7 @@ function CheckoutContent() {
               variant={selectedProvider === 'razorpay' ? 'default' : 'outline'}
               onClick={() => setSelectedProvider('razorpay')}
               className="h-auto py-4"
+              disabled
             >
               <div className="text-center">
                 <RiBankCardLine className="h-6 w-6 mx-auto mb-2" />
@@ -220,6 +221,7 @@ function CheckoutContent() {
               variant={selectedProvider === 'paypal' ? 'default' : 'outline'}
               onClick={() => setSelectedProvider('paypal')}
               className="h-auto py-4"
+              disabled
             >
               <div className="text-center">
                 <RiBankCardLine className="h-6 w-6 mx-auto mb-2" />
