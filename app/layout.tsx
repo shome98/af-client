@@ -1,27 +1,40 @@
-import type {Metadata} from "next";
-import {Montserrat} from "next/font/google";
-import "./globals.css";
-import React from "react";
-import {cn} from "@/lib/utils";
+import type { Metadata } from 'next';
+import React from 'react';
 
-const montserrat = Montserrat({subsets: ['latin'], variable: '--font-sans'});
+import NavBar from '@/components/Navbar';
+import Providers from '@/components/providers';
+
+import './globals.css';
+import Footer from '@/components/landing/Footer';
+import { APP } from '@/constants/landing.constant';
 
 export const metadata: Metadata = {
-    title: "Api Hub",
-    description: "get rest apis in minutes!!!😊",
+  title: APP.name,
+  description: APP.meta_description,
 };
 
 export default function RootLayout({
-                                       children,
-                                   }: Readonly<{
-    children: React.ReactNode;
+  children,
+}: Readonly<{
+  children: React.ReactNode;
 }>) {
-    return (
-        <html
-            lang="en"
-            className={cn("h-full", "antialiased", "font-sans", montserrat.variable, "dark")}
-        >
-        <body className="min-h-full flex flex-col">{children}</body>
-        </html>
-    );
+  return (
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className="h-full font-sans antialiased"
+    >
+      <body className="min-h-full bg-background text-foreground">
+        <Providers initialUser={null}>
+          <div className="relative min-h-screen">
+            {/* <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,rgba(32,129,226,0.11),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(245,158,11,0.10),transparent_26%)]" /> */}
+            <div className="pointer-events-none absolute " />
+            <NavBar />
+            <main>{children}</main>
+            <Footer />
+          </div>
+        </Providers>
+      </body>
+    </html>
+  );
 }

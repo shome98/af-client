@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "code_to_implement/**",
+    "personal-auth-api-client/**",
   ]),
 ]);
 

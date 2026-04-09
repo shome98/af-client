@@ -34,3 +34,24 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Docker (production)
+
+This repo includes a production multi-stage `Dockerfile` using Next.js `output: "standalone"`.
+
+### Build + run
+
+```bash
+docker build -t af-client-user-next .
+docker run --rm -p 3000:3000 af-client-user-next
+```
+
+### Compose
+
+Set values in `.env` (see `.env.example`), then:
+
+```bash
+docker compose up --build
+```
+
+> Note: `NEXT_PUBLIC_*` variables are baked into client assets at build time.
