@@ -151,20 +151,21 @@ export function ApiDetailView({ apiId }: ApiDetailViewProps) {
             </p>
           </div>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" asChild>
+
+        {/* <div className="flex gap-2">
+          <Button variant="outline" disabled asChild>
             <Link href={`/my-apis/${apiId}/test`}>
               <RiTestTubeLine className="mr-2 h-4 w-4" />
               Test API
             </Link>
           </Button>
-          <Button variant="outline" asChild>
+          <Button variant="outline" disabled asChild>
             <Link href={`/my-apis/${apiId}/edit`}>
               <RiEditLine className="mr-2 h-4 w-4" />
               Edit
             </Link>
           </Button>
-        </div>
+        </div> */}
       </div>
 
       {/* Status Banner */}
