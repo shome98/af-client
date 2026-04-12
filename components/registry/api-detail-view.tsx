@@ -8,9 +8,7 @@ import {
   RiFileCopyLine,
   RiKey2Line,
   RiDeleteBinLine,
-  RiEditLine,
   RiExternalLinkLine,
-  RiTestTubeLine,
 } from '@remixicon/react';
 
 import { Button } from '@/components/ui/button';
