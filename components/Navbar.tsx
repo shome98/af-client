@@ -11,7 +11,7 @@ import { logoutUser } from '@/lib/store/auth-store';
 import { useAppDispatch, useAppSelector } from '@/lib/store/hooks';
 import { cn } from '@/lib/utils';
 import Logo from './common/Logo';
-import { SIDEBAR_ROUTES, USER_ROUTES, PUBLIC_ROUTES } from '@/constants/routes';
+import { PUBLIC_ROUTES, SIDEBAR_ROUTES, USER_ROUTES } from '@/constants/routes';
 
 const NavBar = () => {
   const pathname = usePathname();
@@ -54,6 +54,9 @@ const NavBar = () => {
             <Logo />
           </Link>
           <div className="hidden items-center gap-4 md:flex">
+            <Link href={PUBLIC_ROUTES.ABOUT} className={navClass(PUBLIC_ROUTES.ABOUT)}>
+              About
+            </Link>
             {user ? (
               <>
                 <Link

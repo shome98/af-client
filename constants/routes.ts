@@ -13,6 +13,9 @@ export const PUBLIC_ROUTES = {
   VERIFY_EMAIL: '/verify-email',
   RESEND_VERIFICATION: '/resend-verification',
   PRICING: '/pricing',
+  ABOUT: '/about',
+  PRIVACY: '/privacy',
+  DISCLAIMER: '/disclaimer',
 } as const;
 
 // User routes (authentication required) - all prefixed with 'my-'
