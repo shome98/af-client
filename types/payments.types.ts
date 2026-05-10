@@ -9,6 +9,7 @@ export interface Tier {
   benefits: string[];
   price: string;
   limit: number;
+  rateLimit: number;
   permission: PermissionType;
   isActive: boolean;
   createdAt: string;
@@ -177,6 +178,7 @@ export interface CreateTierPayload {
   benefits: string[];
   price: number;
   limit: number;
+  rateLimit: number;
   permission: PermissionType;
   isActive?: boolean;
 }
@@ -187,6 +189,7 @@ export interface UpdateTierPayload {
   benefits?: string[];
   price?: number;
   limit?: number;
+  rateLimit?: number;
   permission?: PermissionType;
   isActive?: boolean;
 }

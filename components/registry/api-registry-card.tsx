@@ -182,6 +182,12 @@ export function ApiRegistryCard({
               <span className="text-muted-foreground">Collections</span>
               <p className="font-medium">{api.recordDefinitions.length}</p>
             </div>
+            <div>
+              <span className="text-muted-foreground">Rate Limit</span>
+              <p className="font-medium">
+                {(api.rateLimit ?? 10000).toLocaleString()}
+              </p>
+            </div>
           </div>
 
           <div className="pt-2 border-t">

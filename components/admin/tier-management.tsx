@@ -58,6 +58,7 @@ const tierSchema = z.object({
   description: z.string().min(1, 'Description is required'),
   price: z.number().min(0, 'Price must be a positive number'),
   limit: z.number().min(1, 'Limit must be at least 1'),
+  rateLimit: z.number().min(1, 'Rate limit must be at least 1'),
   permission: z.enum(['SCRUD', 'SCRUDQ', 'MCRUD', 'MCRUDQ'] as const),
   benefits: z.string().min(1, 'At least one benefit is required'),
   isActive: z.boolean(),
@@ -89,6 +90,7 @@ export function TierManagement() {
     resolver: zodResolver(tierSchema),
     defaultValues: {
       permission: 'SCRUD',
+      rateLimit: 10000,
       isActive: true,
     },
   });
@@ -112,6 +114,7 @@ export function TierManagement() {
         description: data.description,
         price: data.price,
         limit: data.limit,
+        rateLimit: data.rateLimit,
         permission: data.permission,
         benefits,
         isActive: data.isActive,
@@ -138,6 +141,7 @@ export function TierManagement() {
           description: data.description,
           price: data.price,
           limit: data.limit,
+          rateLimit: data.rateLimit,
           permission: data.permission,
           benefits,
           isActive: data.isActive,
@@ -171,6 +175,7 @@ export function TierManagement() {
     setValue('description', tier.description);
     setValue('price', Number(tier.price));
     setValue('limit', tier.limit);
+    setValue('rateLimit', tier.rateLimit);
     setValue('permission', tier.permission);
     setValue('benefits', tier.benefits.join('\n'));
     setValue('isActive', tier.isActive);
@@ -229,6 +234,19 @@ export function TierManagement() {
           />
           {errors.limit && (
             <p className="text-sm text-red-500">{errors.limit.message}</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="rateLimit">Rate Limit</Label>
+          <Input
+            id="rateLimit"
+            type="number"
+            min="1"
+            {...register('rateLimit', { valueAsNumber: true })}
+          />
+          {errors.rateLimit && (
+            <p className="text-sm text-red-500">{errors.rateLimit.message}</p>
           )}
         </div>
       </div>
@@ -322,6 +340,7 @@ export function TierManagement() {
                   <TableHead>Name</TableHead>
                   <TableHead>Price</TableHead>
                   <TableHead>Limit</TableHead>
+                  <TableHead>Rate Limit</TableHead>
                   <TableHead>Permission</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -333,6 +352,9 @@ export function TierManagement() {
                     <TableCell className="font-medium">{tier.name}</TableCell>
                     <TableCell>${tier.price}</TableCell>
                     <TableCell>{tier.limit} APIs</TableCell>
+                    <TableCell>
+                      {(tier.rateLimit ?? 10000).toLocaleString()} requests
+                    </TableCell>
                     <TableCell>
                       <Badge variant="outline">{tier.permission}</Badge>
                     </TableCell>

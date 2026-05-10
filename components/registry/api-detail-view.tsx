@@ -268,6 +268,15 @@ export function ApiDetailView({ apiId }: ApiDetailViewProps) {
               </div>
 
               <div>
+                <span className="text-sm text-muted-foreground">
+                  Rate Limit
+                </span>
+                <p className="font-medium">
+                  {(api.rateLimit ?? 10000).toLocaleString()} requests
+                </p>
+              </div>
+
+              <div>
                 <span className="text-sm text-muted-foreground">Created</span>
                 <p className="font-medium">
                   {new Date(api.createdAt).toLocaleString()}

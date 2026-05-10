@@ -18,6 +18,7 @@ export interface ApiRegistryItem {
   softDelete: boolean;
   textIndexStrategy: string | null;
   hasDocsAccess: boolean;
+  rateLimit: number;
   provisionedUser: string | null;
   expirationTime: string;
   isActive: boolean;
@@ -55,6 +56,7 @@ export interface CreateRegistryApiPayload {
   softDelete?: boolean;
   textIndexStrategy?: 'wildcard' | 'explicit';
   hasDocsAccess?: boolean;
+  rateLimit?: number;
   provisionedUser?: string;
   endpoints?: string[];
 }
@@ -68,6 +70,7 @@ export interface CreateRegistryApiResponse {
     name: string;
     apiKey: string;
     permission: PermissionType;
+    rateLimit: number;
     recordDefinitions: RecordDefinition[];
     expirationTime: string;
   };
@@ -83,6 +86,7 @@ export interface UpdateRegistryApiPayload {
   softDelete?: boolean;
   textIndexStrategy?: 'wildcard' | 'explicit' | null;
   hasDocsAccess?: boolean;
+  rateLimit?: number;
   provisionedUser?: string | null;
   endpoints?: string[];
   expirationTime?: string;

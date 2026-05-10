@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   useForm,
@@ -50,6 +50,7 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { useAppDispatch, useAppSelector } from '@/lib/store/hooks';
 import { createDynamicApi } from '@/lib/store/mongo-store';
+import { fetchMySubscription } from '@/lib/store/subscription-store';
 import { toast } from 'sonner';
 import { API_RESPONSE } from '@/constants/routes';
 
@@ -71,6 +72,8 @@ const FIELD_TYPE_OPTIONS = [
   'ObjectId',
   'Mixed',
 ] as const;
+
+const DEFAULT_RATE_LIMIT = 10000;
 
 // Stage type
 type Stage = 1 | 2 | 3 | 4;
@@ -229,6 +232,7 @@ export default function MongoForm() {
   const dispatch = useAppDispatch();
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
   const { isCreating } = useAppSelector((state) => state.mongoApi);
+  const { subscription } = useAppSelector((state) => state.payments);
   const [currentStage, setCurrentStage] = useState<Stage>(1);
   const [completedStages, setCompletedStages] = useState<Set<number>>(
     new Set(),
@@ -255,6 +259,13 @@ export default function MongoForm() {
   const textIndexStrategy = useWatch({ control, name: 'textIndexStrategy' });
   const hasQuerySupport = supportsQueries(permission);
   const hasMultipleRecords = supportsMultipleRecords(permission);
+  const rateLimit = subscription?.tier?.rateLimit ?? DEFAULT_RATE_LIMIT;
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchMySubscription());
+    }
+  }, [dispatch, isAuthenticated]);
 
   const {
     fields: records,
@@ -328,6 +339,15 @@ export default function MongoForm() {
       return;
     }
 
+    let resolvedRateLimit = rateLimit;
+    if (!subscription) {
+      const subscriptionResult = await dispatch(fetchMySubscription());
+      if (fetchMySubscription.fulfilled.match(subscriptionResult)) {
+        resolvedRateLimit =
+          subscriptionResult.payload.tier?.rateLimit ?? DEFAULT_RATE_LIMIT;
+      }
+    }
+
     // Transform data to match the expected API format
     const payload = {
       permission: data.permission,
@@ -335,6 +355,7 @@ export default function MongoForm() {
       textIndexStrategy: data.textIndexStrategy,
       ...(data.dbName && { dbName: data.dbName }),
       ...(data.dbUri && { dbUri: data.dbUri }),
+      rateLimit: resolvedRateLimit,
       recordDefinitions: data.recordDefinitions.map((record) => ({
         record_name: record.record_name,
         record_config: record.fields.reduce(

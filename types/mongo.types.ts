@@ -53,6 +53,7 @@ export interface CreateDynamicApiPayload {
   textIndexStrategy?: 'wildcard' | 'explicit';
   dbName?: string;
   dbUri?: string;
+  rateLimit?: number;
   recordDefinitions: RecordDefinition[];
 }
 
@@ -67,6 +68,7 @@ export interface DynamicApiSession {
     dbName: string;
   };
   expiresAt: string;
+  rateLimit: number;
   checkDocsAt: string;
 }
 
