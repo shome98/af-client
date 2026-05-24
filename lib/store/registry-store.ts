@@ -8,7 +8,6 @@ import {
 
 import { registryApi, RegistryApiError } from '@/lib/actions/registry-api';
 import type {
-  ApiRegistryItem,
   ApiListParams,
   CreateRegistryApiPayload,
   UpdateRegistryApiPayload,
@@ -108,10 +107,47 @@ export const updateRegistryApi = createAsyncThunk(
   'registry/updateApi',
   async (
     { id, payload }: { id: string; payload: UpdateRegistryApiPayload },
-    { rejectWithValue },
+    { getState, rejectWithValue },
   ) => {
     try {
-      const response = await registryApi.updateApi(id, payload);
+      const { corsPolicy, corsList, credentials, ...registryPayload } = payload;
+      const hasCorsUpdate =
+        corsPolicy !== undefined || corsList !== undefined;
+      const hasRegistryUpdate = Object.keys(registryPayload).length > 0;
+
+      const state = getState() as { registry: ApiRegistryState };
+      const currentApi =
+        state.registry.selectedApi ??
+        state.registry.apis.find((api) => api.id === id) ??
+        null;
+
+      let response = hasRegistryUpdate
+        ? await registryApi.updateApi(id, registryPayload)
+        : currentApi
+          ? {
+              success: true,
+              message: 'No registry fields changed',
+              data: currentApi,
+            }
+          : await registryApi.getApiById(id);
+
+      if (hasCorsUpdate) {
+        const apiId = response.data.apiId ?? currentApi?.apiId;
+        if (!apiId) {
+          return rejectWithValue({
+            message: 'Failed to resolve API ID for CORS update',
+          });
+        }
+
+        await registryApi.updateCorsPolicy(apiId, {
+          ...(corsPolicy !== undefined && { corsPolicy }),
+          ...(corsList !== undefined && { corsList }),
+          ...(credentials !== undefined && { credentials }),
+        });
+
+        response = await registryApi.getApiById(id);
+      }
+
       return response.data;
     } catch (error) {
       if (error instanceof RegistryApiError) {
@@ -157,9 +193,9 @@ export const hardDeleteRegistryApi = createAsyncThunk(
 
 export const regenerateRegistryApiKey = createAsyncThunk(
   'registry/regenerateApiKey',
-  async (id: string, { rejectWithValue }) => {
+  async ({ id, apiId }: { id: string; apiId: string }, { rejectWithValue }) => {
     try {
-      const response = await registryApi.regenerateApiKey(id);
+      const response = await registryApi.regenerateApiKey(apiId);
       return {
         id,
         newApiKey: response.data.newApiKey,
@@ -248,7 +284,7 @@ const registrySlice = createSlice({
         state.isCreating = true;
         state.createError = null;
       })
-      .addCase(createRegistryApi.fulfilled, (state, action) => {
+      .addCase(createRegistryApi.fulfilled, (state) => {
         state.isCreating = false;
         // Add the new API to the list if we have the full item
         // Note: create response doesn't include all fields, so we might need to refetch
@@ -332,7 +368,7 @@ const registrySlice = createSlice({
         state.isRegeneratingKey = true;
         state.regenerateKeyError = null;
       })
-      .addCase(regenerateRegistryApiKey.fulfilled, (state, action) => {
+      .addCase(regenerateRegistryApiKey.fulfilled, (state) => {
         state.isRegeneratingKey = false;
         // Note: We don't store the API key in state for security
         // The component should handle displaying it to the user

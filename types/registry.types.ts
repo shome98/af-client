@@ -1,6 +1,6 @@
 // PG Registry API Types
 
-import type { PermissionType, RecordDefinition } from './mongo.types';
+import type { CorsPolicy, PermissionType, RecordDefinition } from './mongo.types';
 
 export interface ApiRegistryItem {
   id: string;
@@ -19,6 +19,8 @@ export interface ApiRegistryItem {
   textIndexStrategy: string | null;
   hasDocsAccess: boolean;
   rateLimit: number;
+  corsPolicy?: CorsPolicy | null;
+  corsList?: string[];
   provisionedUser: string | null;
   expirationTime: string;
   isActive: boolean;
@@ -87,6 +89,9 @@ export interface UpdateRegistryApiPayload {
   textIndexStrategy?: 'wildcard' | 'explicit' | null;
   hasDocsAccess?: boolean;
   rateLimit?: number;
+  corsPolicy?: CorsPolicy | null;
+  corsList?: string[];
+  credentials?: boolean;
   provisionedUser?: string | null;
   endpoints?: string[];
   expirationTime?: string;

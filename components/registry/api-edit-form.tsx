@@ -38,7 +38,7 @@ import {
   clearErrors,
 } from '@/lib/store/registry-store';
 import { toast } from 'sonner';
-import type { PermissionType } from '@/types/mongo.types';
+import type { CorsPolicy, PermissionType } from '@/types/mongo.types';
 
 const PERMISSION_OPTIONS: PermissionType[] = [
   'SCRUD',
@@ -48,26 +48,98 @@ const PERMISSION_OPTIONS: PermissionType[] = [
 ];
 const TEXT_INDEX_OPTIONS = ['wildcard', 'explicit'] as const;
 
-const editApiSchema = z.object({
-  name: z
-    .string()
-    .min(1, 'Name is required')
-    .max(100, 'Name must be 100 characters or less'),
-  description: z
-    .string()
-    .max(500, 'Description must be 500 characters or less')
-    .optional(),
-  permission: z.enum(['SCRUD', 'SCRUDQ', 'MCRUD', 'MCRUDQ']),
-  softDelete: z.boolean(),
-  textIndexStrategy: z.enum(['wildcard', 'explicit']).nullable(),
-  hasDocsAccess: z.boolean(),
-  isActive: z.boolean(),
-  dbName: z
-    .string()
-    .max(64, 'Database name must be 64 characters or less')
-    .optional(),
-  dbUri: z.string().optional(),
-});
+function normalizeCorsOrigin(value: string): string | null {
+  try {
+    const url = new URL(value);
+    const isOriginOnly =
+      ['http:', 'https:'].includes(url.protocol) &&
+      !url.username &&
+      !url.password &&
+      url.pathname === '/' &&
+      !url.search &&
+      !url.hash;
+
+    return isOriginOnly ? url.origin : null;
+  } catch {
+    return null;
+  }
+}
+
+function parseCorsList(value: string): string[] {
+  return Array.from(
+    new Set(
+      value
+        .split(/[\n,]/)
+        .map((origin) => normalizeCorsOrigin(origin.trim()))
+        .filter((origin): origin is string => Boolean(origin)),
+    ),
+  );
+}
+
+function getCorsListText(corsPolicy?: CorsPolicy | null, corsList?: string[]) {
+  if (corsPolicy?.mode === 'allowlist') {
+    return corsPolicy.allowOrigins.join('\n');
+  }
+
+  const list = corsList?.filter((origin) => origin !== '*') ?? [];
+  return list.join('\n');
+}
+
+function getCorsCredentials(corsPolicy?: CorsPolicy | null) {
+  return corsPolicy?.credentials ?? false;
+}
+
+const editApiSchema = z
+  .object({
+    name: z
+      .string()
+      .min(1, 'Name is required')
+      .max(100, 'Name must be 100 characters or less'),
+    description: z
+      .string()
+      .max(500, 'Description must be 500 characters or less')
+      .optional(),
+    permission: z.enum(['SCRUD', 'SCRUDQ', 'MCRUD', 'MCRUDQ']),
+    softDelete: z.boolean(),
+    textIndexStrategy: z.enum(['wildcard', 'explicit']).nullable(),
+    hasDocsAccess: z.boolean(),
+    isActive: z.boolean(),
+    dbName: z
+      .string()
+      .max(64, 'Database name must be 64 characters or less')
+      .optional(),
+    dbUri: z.string().optional(),
+    corsMode: z.enum(['any', 'allowlist']),
+    corsListText: z.string(),
+    corsCredentials: z.boolean(),
+  })
+  .superRefine((values, ctx) => {
+    if (values.corsMode !== 'allowlist') return;
+
+    const origins = parseCorsList(values.corsListText);
+    if (origins.length === 0) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['corsListText'],
+        message: 'Add at least one allowed origin or switch to allow all',
+      });
+      return;
+    }
+
+    const invalidOrigin = values.corsListText
+      .split(/[\n,]/)
+      .map((origin) => origin.trim())
+      .filter(Boolean)
+      .find((origin) => !normalizeCorsOrigin(origin));
+
+    if (invalidOrigin) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['corsListText'],
+        message: `Invalid origin: ${invalidOrigin}`,
+      });
+    }
+  });
 
 type EditApiFormValues = z.infer<typeof editApiSchema>;
 
@@ -93,6 +165,9 @@ export function ApiEditForm({ apiId }: ApiEditFormProps) {
       isActive: true,
       dbName: '',
       dbUri: '',
+      corsMode: 'any',
+      corsListText: '',
+      corsCredentials: false,
     },
   });
 
@@ -102,6 +177,11 @@ export function ApiEditForm({ apiId }: ApiEditFormProps) {
   const softDelete = useWatch({ control: form.control, name: 'softDelete' });
   const hasDocsAccess = useWatch({ control: form.control, name: 'hasDocsAccess' });
   const textIndexStrategy = useWatch({ control: form.control, name: 'textIndexStrategy' });
+  const corsMode = useWatch({ control: form.control, name: 'corsMode' });
+  const corsCredentials = useWatch({
+    control: form.control,
+    name: 'corsCredentials',
+  });
 
   useEffect(() => {
     dispatch(fetchApiById(apiId));
@@ -126,6 +206,13 @@ export function ApiEditForm({ apiId }: ApiEditFormProps) {
         isActive: selectedApi.isActive,
         dbName: selectedApi.dbName,
         dbUri: selectedApi.dbUri,
+        corsMode:
+          selectedApi.corsPolicy?.mode === 'allowlist' ? 'allowlist' : 'any',
+        corsListText: getCorsListText(
+          selectedApi.corsPolicy,
+          selectedApi.corsList,
+        ),
+        corsCredentials: getCorsCredentials(selectedApi.corsPolicy),
       });
     }
   }, [selectedApi, form]);
@@ -142,6 +229,18 @@ export function ApiEditForm({ apiId }: ApiEditFormProps) {
   }, [error, updateError, dispatch]);
 
   const onSubmit = async (values: EditApiFormValues) => {
+    const corsPolicy: CorsPolicy =
+      values.corsMode === 'allowlist'
+        ? {
+            mode: 'allowlist',
+            allowOrigins: parseCorsList(values.corsListText),
+            credentials: values.corsCredentials,
+          }
+        : {
+            mode: 'any',
+            credentials: values.corsCredentials,
+          };
+
     const result = await dispatch(
       updateRegistryApi({
         id: apiId,
@@ -155,6 +254,7 @@ export function ApiEditForm({ apiId }: ApiEditFormProps) {
           isActive: values.isActive,
           dbName: values.dbName,
           dbUri: values.dbUri,
+          corsPolicy,
         },
       }),
     );
@@ -331,6 +431,74 @@ export function ApiEditForm({ apiId }: ApiEditFormProps) {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>CORS</CardTitle>
+            <CardDescription>
+              Control which browser origins can call this generated API
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <Label>CORS Mode</Label>
+              <Select
+                value={corsMode}
+                onValueChange={(value) =>
+                  form.setValue('corsMode', value as 'any' | 'allowlist', {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="any">Allow all origins</SelectItem>
+                  <SelectItem value="allowlist">Allowlist only</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {corsMode === 'allowlist' && (
+              <div className="space-y-2">
+                <Label htmlFor="corsListText">Allowed Origins</Label>
+                <Textarea
+                  id="corsListText"
+                  {...form.register('corsListText')}
+                  rows={4}
+                  placeholder="https://app.example.com&#10;http://localhost:3000"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Add one origin per line or separate origins with commas.
+                </p>
+                {form.formState.errors.corsListText && (
+                  <p className="text-sm text-destructive">
+                    {form.formState.errors.corsListText.message}
+                  </p>
+                )}
+              </div>
+            )}
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Allow Credentials</Label>
+                <p className="text-sm text-muted-foreground">
+                  Include cookies or authorization credentials in browser calls
+                </p>
+              </div>
+              <Switch
+                checked={corsCredentials}
+                onCheckedChange={(checked) =>
+                  form.setValue('corsCredentials', checked, {
+                    shouldDirty: true,
+                  })
+                }
+              />
             </div>
           </CardContent>
         </Card>

@@ -151,7 +151,7 @@ export const mongoFactoryApi = {
    * @param accessToken - User's access token for authorization
    */
   regenerateApiKey: (apiId: string, accessToken: string) =>
-    mongoRequest<{ apiKey: string }>(
+    mongoRequest<{ apiId: string; newApiKey: string }>(
       {
         url: `/regenerate-api-key/${apiId}`,
         method: 'POST',

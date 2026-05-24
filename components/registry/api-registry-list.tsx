@@ -34,6 +34,7 @@ import {
   setLimit,
 } from '@/lib/store/registry-store';
 import { toast } from 'sonner';
+import type { ApiRegistryItem } from '@/types/registry.types';
 
 export function ApiRegistryList() {
   const dispatch = useAppDispatch();
@@ -53,6 +54,9 @@ export function ApiRegistryList() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [regenerateDialogOpen, setRegenerateDialogOpen] = useState(false);
   const [selectedApiId, setSelectedApiId] = useState<string | null>(null);
+  const [selectedApiRuntimeId, setSelectedApiRuntimeId] = useState<
+    string | null
+  >(null);
   const [newApiKey, setNewApiKey] = useState<string | null>(null);
 
   useEffect(() => {
@@ -94,20 +98,27 @@ export function ApiRegistryList() {
     }
   }, [error, deleteError, regenerateKeyError, dispatch]);
 
-  const handleRegenerateKey = (id: string) => {
-    setSelectedApiId(id);
+  const handleRegenerateKey = (api: ApiRegistryItem) => {
+    setSelectedApiId(api.id);
+    setSelectedApiRuntimeId(api.apiId);
     setRegenerateDialogOpen(true);
   };
 
   const confirmRegenerateKey = async () => {
-    if (!selectedApiId) return;
+    if (!selectedApiId || !selectedApiRuntimeId) return;
 
-    const result = await dispatch(regenerateRegistryApiKey(selectedApiId));
+    const result = await dispatch(
+      regenerateRegistryApiKey({
+        id: selectedApiId,
+        apiId: selectedApiRuntimeId,
+      }),
+    );
     if (regenerateRegistryApiKey.fulfilled.match(result)) {
       setNewApiKey(result.payload.newApiKey);
       toast.success('API key regenerated successfully');
     }
     setRegenerateDialogOpen(false);
+    setSelectedApiRuntimeId(null);
   };
 
   const handleSoftDelete = (id: string) => {

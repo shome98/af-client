@@ -228,7 +228,7 @@ const mongoApiSlice = createSlice({
       .addCase(regenerateApiKey.fulfilled, (state, action) => {
         state.isRegeneratingKey = false;
         if (state.apiSession && action.payload) {
-          state.apiSession.apiKey = action.payload.apiKey;
+          state.apiSession.apiKey = action.payload.newApiKey;
           // Update localStorage
           if (typeof window !== 'undefined') {
             localStorage.setItem(

@@ -30,7 +30,7 @@ import type { ApiRegistryItem } from '@/types/registry.types';
 
 interface ApiRegistryCardProps {
   api: ApiRegistryItem;
-  onRegenerateKey: (id: string) => void;
+  onRegenerateKey: (api: ApiRegistryItem) => void;
   onSoftDelete: (id: string) => void;
   onCopyApiId: (apiId: string) => void;
 }
@@ -144,7 +144,7 @@ export function ApiRegistryCard({
                 <RiFileCopyLine className="mr-2 h-4 w-4" />
                 Copy API ID
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onRegenerateKey(api.id)} disabled>
+              <DropdownMenuItem onClick={() => onRegenerateKey(api)} disabled>
                 <RiKey2Line className="mr-2 h-4 w-4" />
                 Regenerate Key
               </DropdownMenuItem>

@@ -54,8 +54,20 @@ export interface CreateDynamicApiPayload {
   dbName?: string;
   dbUri?: string;
   rateLimit?: number;
+  corsPolicy?: CorsPolicy;
   recordDefinitions: RecordDefinition[];
 }
+
+export type CorsPolicy =
+  | {
+      mode: 'any';
+      credentials?: boolean;
+    }
+  | {
+      mode: 'allowlist';
+      allowOrigins: string[];
+      credentials?: boolean;
+    };
 
 // Response data from creating a dynamic API
 export interface DynamicApiSession {

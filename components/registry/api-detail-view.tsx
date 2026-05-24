@@ -112,7 +112,14 @@ export function ApiDetailView({ apiId }: ApiDetailViewProps) {
   };
 
   const handleRegenerateKey = async () => {
-    const result = await dispatch(regenerateRegistryApiKey(apiId));
+    if (!selectedApi) return;
+
+    const result = await dispatch(
+      regenerateRegistryApiKey({
+        id: apiId,
+        apiId: selectedApi.apiId,
+      }),
+    );
     if (regenerateRegistryApiKey.fulfilled.match(result)) {
       setNewApiKey(result.payload.newApiKey);
       toast.success('API key regenerated successfully');
