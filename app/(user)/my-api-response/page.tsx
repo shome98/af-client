@@ -27,6 +27,7 @@ import {
   selectIsSessionExpired,
 } from '@/lib/store/mongo-store';
 import { toast } from 'sonner';
+import { USER_ROUTES } from '@/constants/routes';
 
 export default function ApiResponsePage() {
   const router = useRouter();
@@ -45,7 +46,7 @@ export default function ApiResponsePage() {
   useEffect(() => {
     if (isHydrated && !apiSession && !isCreating) {
       // No session found, redirect to create API page
-      router.push('/create-api');
+      router.push(USER_ROUTES.CREATE_API);
     }
   }, [isHydrated, apiSession, isCreating, router]);
 
@@ -56,7 +57,7 @@ export default function ApiResponsePage() {
 
   const handleClearSession = () => {
     dispatch(clearApiSession());
-    router.push('/create-api');
+    router.push(USER_ROUTES.CREATE_API);
   };
 
   if (!isHydrated || isCreating) {

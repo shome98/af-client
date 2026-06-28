@@ -35,6 +35,7 @@ import {
 } from '@/lib/store/registry-store';
 import { toast } from 'sonner';
 import type { ApiRegistryItem } from '@/types/registry.types';
+import { USER_ROUTES } from '@/constants/routes';
 
 export function ApiRegistryList() {
   const dispatch = useAppDispatch();
@@ -161,7 +162,7 @@ export function ApiRegistryList() {
           </p>
         </div>
         <Button asChild>
-          <Link href="/create-api">
+          <Link href={USER_ROUTES.CREATE_API}>
             <RiAddLine className="mr-2 h-4 w-4" />
             Create New API
           </Link>
@@ -211,7 +212,7 @@ export function ApiRegistryList() {
             <div className="text-center py-12 border rounded-lg bg-muted/50">
               <p className="text-muted-foreground mb-4">No APIs found</p>
               <Button asChild variant="outline">
-                <Link href="/create-api">Create your first API</Link>
+                <Link href={USER_ROUTES.CREATE_API}>Create your first API</Link>
               </Button>
             </div>
           ) : (
